@@ -19,7 +19,15 @@ body {
     margin-top: 40px;
     margin-left: 10px;
     margin-bottom: 10px;
-    width: 350px;
+}
+
+.dialog-card {
+    width: 600px;
+}
+
+.pokemon-image {
+    height: 200px;
+    width: 200px;
 }
 
 .pokedex:hover{
@@ -80,15 +88,15 @@ body {
 }
 
 .d-none {
-    display: none;
+    display: none !important;
 }
 
 .width-175 {
-    width: 175px !important;
+    width: 400px !important;
 }
 
 .width-130 {
-    width: 130px;
+    width: 350px;
 }
 
 .height-75 {
@@ -113,7 +121,7 @@ body {
 }
 
 .dialog-bg {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.8);
     z-index: 999;
     position: fixed;
     left: 0;
