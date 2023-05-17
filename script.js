@@ -11,6 +11,10 @@ let allPokemons = [];
 let allPokemonsId = [];
 let searchIds = [];
 
+let searchField = document.getElementById('search') ;
+
+searchField.addEventListener('input',filterPokemon) ;
+
 async function loadPokemon(option) {
     switch (option) {
         case 'normal':
