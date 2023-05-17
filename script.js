@@ -6,70 +6,51 @@ let i = 1;
 let endCounter = 21;
 let pokemonLimit;
 let activeCard = 0;
-let inputField = document.getElementById('search');
 
 let allPokemons = [];
 let allPokemonsId = [];
 let searchIds = [];
 
-
-//inputField.addEventListener('input', filterPokemon);
-
-async function loadPokemon() {
-    for (i; i < endCounter; i++) {
-        let pokemonUrl = `https://pokeapi.co/api/v2/pokemon/${i}`;
-        let speciesUrl = `https://pokeapi.co/api/v2/pokemon-species/${i}/`;
-        let limitUrl = 'https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0';
-        let pokemonResponse = await fetch(pokemonUrl);
-        let spieciesResponse = await fetch(speciesUrl);
-        let limitResponse = await fetch(limitUrl);
-        currentPokemon = await pokemonResponse.json();
-        currentPokemonSpecies = await spieciesResponse.json();
-        pokemonResource = await limitResponse.json();
-        pokemonLimit = pokemonResource['count'];
-
-        allPokemons.push(currentPokemon['name']);
-        allPokemonsId.push(currentPokemon['id']);
-
-        createPokemonCard();
-
-        renderPokemonInfo();
-
+async function loadPokemon(option) {
+    switch (option) {
+        case 'normal':
+            for (i; i < endCounter; i++) {
+                await loadPokemonFromUrl();
+                allPokemons.push(currentPokemon['name']);
+                allPokemonsId.push(currentPokemon['id']);
+            }
+            break;
+        case 'search':
+            document.getElementById('showDialog').innerHTML = '';
+            for (let j = 0; j < searchIds.length; j++) {
+                const pokemon = searchIds[j];
+                i = pokemon;
+                await loadPokemonFromUrl();
+            }
+            break;
+        default:
+            break;
     }
 }
 
-async function loadPokemonSearch() {
-    document.getElementById('showDialog').innerHTML = '';
-    for (let j = 0; j < searchIds.length; j++) {
-        const pokemon = searchIds[j];
-        i = pokemon;
-        let pokemonUrl = `https://pokeapi.co/api/v2/pokemon/${i}`;
-        let speciesUrl = `https://pokeapi.co/api/v2/pokemon-species/${i}/`;
-        let limitUrl = 'https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0';
-        let pokemonResponse = await fetch(pokemonUrl);
-        let spieciesResponse = await fetch(speciesUrl);
-        let limitResponse = await fetch(limitUrl);
-        currentPokemon = await pokemonResponse.json();
-        currentPokemonSpecies = await spieciesResponse.json();
-        pokemonResource = await limitResponse.json();
-        pokemonLimit = pokemonResource['count'];
+async function loadPokemonFromUrl() {
+    let pokemonUrl = `https://pokeapi.co/api/v2/pokemon/${i}`;
+    let speciesUrl = `https://pokeapi.co/api/v2/pokemon-species/${i}/`;
+    let limitUrl = 'https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0';
+    let pokemonResponse = await fetch(pokemonUrl);
+    let spieciesResponse = await fetch(speciesUrl);
+    let limitResponse = await fetch(limitUrl);
+    currentPokemon = await pokemonResponse.json();
+    currentPokemonSpecies = await spieciesResponse.json();
+    pokemonResource = await limitResponse.json();
+    pokemonLimit = pokemonResource['count'];
 
-        createPokemonCard();
-
-        renderPokemonInfo();
-    }
+    createPokemonCard();
+    renderPokemonInfo();
 }
 
 function renderPokemonInfo() {
-    //name
-    document.getElementById(`pokemonName${i}`).innerHTML = currentPokemon['name'];
-    document.getElementById(`pokemonName-dialog${i}`).innerHTML = currentPokemon['name'];
-    //picture
-    document.getElementById(`pokemonImage${i}`).src = currentPokemon['sprites']['other']['official-artwork']['front_shiny'];
-    document.getElementById(`pokemonImage-dialog${i}`).src = currentPokemon['sprites']['other']['official-artwork']['front_shiny'];
-    //id
-    document.getElementById(`idNumber${i}`).innerHTML = `#00${currentPokemon['id']}`;
-    document.getElementById(`idNumber-dialog${i}`).innerHTML = `#00${currentPokemon['id']}`;
+    renderBasicInformation();
     //type
     renderPokemonType();
     //colour
@@ -88,6 +69,18 @@ function renderPokemonInfo() {
     renderPokemonBaseStats();
     //moves
     renderPokemonMoves();
+}
+
+function renderBasicInformation() {
+    //name
+    document.getElementById(`pokemonName${i}`).innerHTML = currentPokemon['name'];
+    document.getElementById(`pokemonName-dialog${i}`).innerHTML = currentPokemon['name'];
+    //picture
+    document.getElementById(`pokemonImage${i}`).src = currentPokemon['sprites']['other']['official-artwork']['front_shiny'];
+    document.getElementById(`pokemonImage-dialog${i}`).src = currentPokemon['sprites']['other']['official-artwork']['front_shiny'];
+    //id
+    document.getElementById(`idNumber${i}`).innerHTML = `#00${currentPokemon['id']}`;
+    document.getElementById(`idNumber-dialog${i}`).innerHTML = `#00${currentPokemon['id']}`;
 }
 
 function renderPokemonType() {
@@ -179,18 +172,22 @@ function loadMore() {
     endCounter = endCounter + 20;
     if (!document.getElementById('search').value == '') {
         document.getElementById('main-window').innerHTML = '';
+        document.getElementById('showDialog').innerHTML = '' ;
         i = 1;
         allPokemons = [];
+        allPokemonsId = [];
+        searchIds = [] ;
+        activeCard = 0 ;
     }
     if (endCounter > pokemonLimit) {
         endCounter = pokemonLimit;
     }
     document.getElementById('search').value = '';
-    setTimeout(loadPokemon, 200);
+    loadPokemon('normal');
 }
 
 function filterPokemon() {
-    if (!document.getElementById('dialog').classList == 'd-none') {
+    if (!document.getElementById('dialog').classList.contains('d-none')) {
         document.getElementById(`dialog-card${activeCard}`).classList.add('d-none');
         document.getElementById('dialog').classList.add('d-none');
     }
@@ -206,7 +203,7 @@ function filterPokemon() {
             searchIds.push(allPokemonsId[j]);
         }
     }
-    loadPokemonSearch();
+    loadPokemon('search');
 }
 
 function showDialog(CardNumber) {
@@ -222,28 +219,56 @@ function closeDialog() {
 }
 
 function previousCard() {
-    document.getElementById(`dialog-card${activeCard}`).classList.add('d-none');
-    activeCard = activeCard - 1;
-    document.getElementById(`dialog-card${activeCard}`).classList.remove('d-none');
+    if (!document.getElementById('search').value == '') {
+        showFilteredCard('previous');
+    } else {
+        document.getElementById(`dialog-card${activeCard}`).classList.add('d-none');
+        activeCard = activeCard - 1;
+        document.getElementById(`dialog-card${activeCard}`).classList.remove('d-none');
+    }
     checkCardNumber();
+
 }
 
 function nextCard() {
-    document.getElementById(`dialog-card${activeCard}`).classList.add('d-none');
-    activeCard = activeCard + 1;
-    document.getElementById(`dialog-card${activeCard}`).classList.remove('d-none');
+    if (!document.getElementById('search').value == '') {
+        showFilteredCard('next');
+    } else {
+        document.getElementById(`dialog-card${activeCard}`).classList.add('d-none');
+        activeCard = activeCard + 1;
+        document.getElementById(`dialog-card${activeCard}`).classList.remove('d-none');
+    }
     checkCardNumber();
+
+}
+
+function showFilteredCard(direction) {
+    //find position in array
+    let positionArray = searchIds.indexOf(activeCard);
+    document.getElementById(`dialog-card${activeCard}`).classList.add('d-none');
+
+    switch (direction) {
+        case 'next':
+            activeCard = searchIds[positionArray + 1];
+            break;
+        case 'previous':
+            activeCard = searchIds[positionArray - 1];
+            break;
+        default:
+            break;
+    }
+    document.getElementById(`dialog-card${activeCard}`).classList.remove('d-none');
 }
 
 function checkCardNumber() {
-    if (activeCard == 1) {
+    if ((activeCard == 1) || ((searchIds.length >= 1) && (activeCard == searchIds[0]))) {
         document.getElementById('arrow-previous').classList.add('d-none');
         document.getElementById('showDialog').classList.add('margin-arrow-left');
     } else {
         document.getElementById('arrow-previous').classList.remove('d-none');
         document.getElementById('showDialog').classList.remove('margin-arrow-left');
     }
-    if (activeCard == allPokemons.length) {
+    if ((activeCard == allPokemons.length) || (activeCard == searchIds[searchIds.length - 1])) {
         document.getElementById('arrow-next').classList.add('d-none');
         document.getElementById('showDialog').classList.add('margin-arrow-right');
     } else {

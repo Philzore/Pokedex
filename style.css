@@ -20,6 +20,11 @@ body {
     margin-left: 10px;
     margin-bottom: 10px;
     max-width: 250px;
+    transition: transform ease-in-out 222ms ;
+}
+
+.pokemon-card:hover {
+    transform: scale(1.05);
 }
 
 .dialog-card {
@@ -187,6 +192,7 @@ body {
 @media (max-width: 400px) {
     .pokemon-card {
         width: 280px;
+        margin-left: 0;
     }
 
     .width-175 {
@@ -197,7 +203,25 @@ body {
         display: none;
     }
 
+    .margin-arrow-left {
+        margin-left: 0;
+    }
+
+    .margin-arrow-right {
+        margin-right: 0;
+    }
+
     .responsive-header {
         flex-direction: column;
+    }
+
+    .dialog-card {
+        max-width: 250px;
+    }
+}
+
+@media (max-height: 670px) {
+    .dialog-card {
+        margin-top: 120px;
     }
 }
