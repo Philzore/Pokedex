@@ -11,29 +11,15 @@ let allPokemons = [];
 let allPokemonsId = [];
 let searchIds = [];
 
-let searchField = document.getElementById('search') ;
+let searchField = document.getElementById('search');
 
-searchField.addEventListener('input',filterPokemon) ;
+searchField.addEventListener('input', filterPokemon);
 
-async function loadPokemon(option) {
-    switch (option) {
-        case 'normal':
-            for (i; i < endCounter; i++) {
-                await loadPokemonFromUrl();
-                allPokemons.push(currentPokemon['name']);
-                allPokemonsId.push(currentPokemon['id']);
-            }
-            break;
-        case 'search':
-            document.getElementById('showDialog').innerHTML = '';
-            for (let j = 0; j < searchIds.length; j++) {
-                const pokemon = searchIds[j];
-                i = pokemon;
-                await loadPokemonFromUrl();
-            }
-            break;
-        default:
-            break;
+async function loadPokemon() {
+    for (i; i < endCounter; i++) {
+        await loadPokemonFromUrl();
+        allPokemons.push(currentPokemon['name']);
+        allPokemonsId.push(currentPokemon['id']);
     }
 }
 
@@ -150,53 +136,39 @@ function renderPokemonMoves() {
 }
 
 function changeInfo(category, i) {
+    document.getElementById(`base-stats${i}`).classList.add('d-none');
+    document.getElementById(`moves${i}`).classList.add('d-none');
+    document.getElementById(`about${i}`).classList.add('d-none');
 
-    switch (category) {
-        case 'about':
-            document.getElementById(`base-stats${i}`).classList.add('d-none');
-            document.getElementById(`moves${i}`).classList.add('d-none');
-            document.getElementById(`about${i}`).classList.remove('d-none');
-            break;
-        case 'base-stats':
-            document.getElementById(`about${i}`).classList.add('d-none');
-            document.getElementById(`moves${i}`).classList.add('d-none');
-            document.getElementById(`base-stats${i}`).classList.remove('d-none');
-            break;
-        case 'moves':
-            document.getElementById(`base-stats${i}`).classList.add('d-none');
-            document.getElementById(`about${i}`).classList.add('d-none');
-            document.getElementById(`moves${i}`).classList.remove('d-none');
-            break;
-        default:
-            break;
-    }
+    document.getElementById(`${category}${i}`).classList.remove('d-none');
+
 }
 
 function loadMore() {
     endCounter = endCounter + 20;
     if (!document.getElementById('search').value == '') {
         document.getElementById('main-window').innerHTML = '';
-        document.getElementById('showDialog').innerHTML = '' ;
+        document.getElementById('showDialog').innerHTML = '';
         i = 1;
         allPokemons = [];
         allPokemonsId = [];
-        searchIds = [] ;
-        activeCard = 0 ;
+        searchIds = [];
+        activeCard = 0;
     }
     if (endCounter > pokemonLimit) {
         endCounter = pokemonLimit;
     }
     document.getElementById('search').value = '';
-    loadPokemon('normal');
+    loadPokemon();
 }
 
-function filterPokemon() {
+async function filterPokemon() {
+    searchIds = [];
     if (!document.getElementById('dialog').classList.contains('d-none')) {
         document.getElementById(`dialog-card${activeCard}`).classList.add('d-none');
         document.getElementById('dialog').classList.add('d-none');
     }
-    document.getElementById('main-window').innerHTML = '';
-    searchIds = [];
+
     let search = document.getElementById('search').value;
 
     search = search.toLowerCase();
@@ -205,9 +177,12 @@ function filterPokemon() {
         const name = allPokemons[j];
         if (name.toLowerCase().includes(search)) {
             searchIds.push(allPokemonsId[j]);
+            document.getElementById(`pokemon-card${j + 1}`).classList.remove('d-none');
+        } else {
+            document.getElementById(`pokemon-card${j + 1}`).classList.add('d-none');
         }
     }
-    loadPokemon('search');
+
 }
 
 function showDialog(CardNumber) {

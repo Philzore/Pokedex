@@ -22,7 +22,7 @@ function createPokemonCard() {
 }
 
 function createDialogCard() {
-    document.getElementById('showDialog').innerHTML +=  `
+    document.getElementById('showDialog').innerHTML += `
            
     <div class="dialog-card d-none" id="dialog-card${i}" onclick="">
     <!--Head-->
@@ -37,7 +37,7 @@ function createDialogCard() {
     </div>
     <!---->
     <div class="info-container ">
-        <img id="pokemonImage-dialog${i}" src="">
+        <img class="pokemon-image" id="pokemonImage-dialog${i}" src="">
         <!--Navigation-->
         <ul class="nav nav-underline border-bottom mx-4 justify-content-around">
             <li class="nav-item">
