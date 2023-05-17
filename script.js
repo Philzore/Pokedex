@@ -5,7 +5,7 @@ let pokemonResource;
 let i = 1;
 let endCounter = 21;
 let pokemonLimit;
-let activeCard = 0 ;
+let activeCard = 0;
 let inputField = document.getElementById('search');
 
 let allPokemons = [];
@@ -13,7 +13,7 @@ let allPokemonsId = [];
 let searchIds = [];
 
 
-inputField.addEventListener('input', filterPokemon);
+//inputField.addEventListener('input', filterPokemon);
 
 async function loadPokemon() {
     for (i; i < endCounter; i++) {
@@ -32,17 +32,17 @@ async function loadPokemon() {
         allPokemonsId.push(currentPokemon['id']);
 
         createPokemonCard();
-        //createDialogCard() ;
+
         renderPokemonInfo();
 
     }
 }
 
 async function loadPokemonSearch() {
+    document.getElementById('showDialog').innerHTML = '';
     for (let j = 0; j < searchIds.length; j++) {
         const pokemon = searchIds[j];
         i = pokemon;
-
         let pokemonUrl = `https://pokeapi.co/api/v2/pokemon/${i}`;
         let speciesUrl = `https://pokeapi.co/api/v2/pokemon-species/${i}/`;
         let limitUrl = 'https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0';
@@ -55,7 +55,7 @@ async function loadPokemonSearch() {
         pokemonLimit = pokemonResource['count'];
 
         createPokemonCard();
-        
+
         renderPokemonInfo();
     }
 }
@@ -150,82 +150,9 @@ function renderPokemonMoves() {
         const move = currentPokemon['moves'][j]['move']['name'];
         document.getElementById(`moves${i}`).innerHTML += `<span>${move}</span>`
     }
-
 }
 
-function renderPokemonColor() {
-    let color = currentPokemonSpecies['color']['name'];
-    switch (color) {
-        case 'black':
-            document.getElementById(`pokedex${i}`).style.backgroundColor = '#B3A9A3';
-            document.getElementById(`pokedex-dialog${i}`).style.backgroundColor = '#B3A9A3';
-            renderPokemonTypeColor(i, '#C2BAB5');
-            break;
-        case 'blue':
-            document.getElementById(`pokedex${i}`).style.backgroundColor = '#76BEFE';
-            document.getElementById(`pokedex-dialog${i}`).style.backgroundColor = '#76BEFE';
-            renderPokemonTypeColor(i, '#91CBFE');
-            break;
-        case 'brown':
-            document.getElementById(`pokedex${i}`).style.backgroundColor = '#C8A59A';
-            document.getElementById(`pokedex-dialog${i}`).style.backgroundColor = '#C8A59A';
-            renderPokemonTypeColor(i, '#D3B7AE');
-            break;
-        case 'gray':
-            document.getElementById(`pokedex${i}`).style.backgroundColor = '#E0E0E6';
-            document.getElementById(`pokedex-dialog${i}`).style.backgroundColor = '#E0E0E6';
-            renderPokemonTypeColor(i, '#E6E6EB');
-            break;
-        case 'green':
-            document.getElementById(`pokedex${i}`).style.backgroundColor = '#49D0B0';
-            document.getElementById(`pokedex-dialog${i}`).style.backgroundColor = '#49D0B0';
-            renderPokemonTypeColor(i, '#7FDEC7');
-            break;
-        case 'pink':
-            document.getElementById(`pokedex${i}`).style.backgroundColor = '#FBDEFB';
-            document.getElementById(`pokedex${i}`).style.color = 'black';
-            document.getElementById(`pokedex-dialog${i}`).style.backgroundColor = '#FBDEFB';
-            document.getElementById(`pokedex-dialog${i}`).style.color = 'black';
-            renderPokemonTypeColor(i, '#C8B1C8');
-            break;
-        case 'purple':
-            document.getElementById(`pokedex${i}`).style.backgroundColor = '#D1AED1';
-            document.getElementById(`pokedex-dialog${i}`).style.backgroundColor = '#D1AED1';
-            renderPokemonTypeColor(i, '#DABEDA');
-            break;
-        case 'red':
-            document.getElementById(`pokedex${i}`).style.backgroundColor = '#F66C6D';
-            document.getElementById(`pokedex-dialog${i}`).style.backgroundColor = '#F66C6D';
-            renderPokemonTypeColor(i, '#F7898A');
-            break;
-        case 'white':
-            document.getElementById(`pokedex${i}`).style.backgroundColor = '#E5E5E5';
-            document.getElementById(`pokedex${i}`).style.color = 'black';
-            document.getElementById(`pokedex-dialog${i}`).style.backgroundColor = '#E5E5E5';
-            document.getElementById(`pokedex-dialog${i}`).style.color = 'black';
-            renderPokemonTypeColor(i, '#FFFFFF');
-            break;
-        case 'yellow':
-            document.getElementById(`pokedex${i}`).style.backgroundColor = '#E1C163';
-            document.getElementById(`pokedex-dialog${i}`).style.backgroundColor = '#E1C163';
-            renderPokemonTypeColor(i, '#FADB7D');
-            break;
-
-        default:
-            break;
-    }
-}
-
-function renderPokemonTypeColor(i, colorCode) {
-    for (let j = 0; j < document.getElementById(`type${i}`).children.length; j++) {
-        const element = document.getElementById(`type${i}`).children[j];
-        const elementDialog = document.getElementById(`type-dialog${i}`).children[j];
-        element.style.backgroundColor = colorCode;
-        elementDialog.style.backgroundColor = colorCode;
-    }
-}
-
-function changeInfo(category,i) {
+function changeInfo(category, i) {
 
     switch (category) {
         case 'about':
@@ -249,17 +176,24 @@ function changeInfo(category,i) {
 }
 
 function loadMore() {
-    //i = i + 1 ;
-    document.getElementById('search').value = '';
     endCounter = endCounter + 20;
+    if (!document.getElementById('search').value == '') {
+        document.getElementById('main-window').innerHTML = '';
+        i = 1;
+        allPokemons = [];
+    }
     if (endCounter > pokemonLimit) {
         endCounter = pokemonLimit;
     }
-    //loadPokemon();
-    setTimeout(loadPokemon,200) ;
+    document.getElementById('search').value = '';
+    setTimeout(loadPokemon, 200);
 }
 
 function filterPokemon() {
+    if (!document.getElementById('dialog').classList == 'd-none') {
+        document.getElementById(`dialog-card${activeCard}`).classList.add('d-none');
+        document.getElementById('dialog').classList.add('d-none');
+    }
     document.getElementById('main-window').innerHTML = '';
     searchIds = [];
     let search = document.getElementById('search').value;
@@ -272,20 +206,48 @@ function filterPokemon() {
             searchIds.push(allPokemonsId[j]);
         }
     }
-
-    setTimeout(loadPokemonSearch,200);
+    loadPokemonSearch();
 }
 
 function showDialog(CardNumber) {
-    activeCard = CardNumber ;
-    document.getElementById('dialog').classList.remove('d-none') ;
-    document.getElementById(`dialog-card${CardNumber}`).classList.remove('d-none') ;
-    
-
+    activeCard = CardNumber;
+    document.getElementById('dialog').classList.remove('d-none');
+    document.getElementById(`dialog-card${CardNumber}`).classList.remove('d-none');
+    checkCardNumber();
 }
 
 function closeDialog() {
-    document.getElementById(`dialog-card${activeCard}`).classList.add('d-none') ;
-    document.getElementById('dialog').classList.add('d-none') ;
+    document.getElementById(`dialog-card${activeCard}`).classList.add('d-none');
+    document.getElementById('dialog').classList.add('d-none');
 }
 
+function previousCard() {
+    document.getElementById(`dialog-card${activeCard}`).classList.add('d-none');
+    activeCard = activeCard - 1;
+    document.getElementById(`dialog-card${activeCard}`).classList.remove('d-none');
+    checkCardNumber();
+}
+
+function nextCard() {
+    document.getElementById(`dialog-card${activeCard}`).classList.add('d-none');
+    activeCard = activeCard + 1;
+    document.getElementById(`dialog-card${activeCard}`).classList.remove('d-none');
+    checkCardNumber();
+}
+
+function checkCardNumber() {
+    if (activeCard == 1) {
+        document.getElementById('arrow-previous').classList.add('d-none');
+        document.getElementById('showDialog').classList.add('margin-arrow-left');
+    } else {
+        document.getElementById('arrow-previous').classList.remove('d-none');
+        document.getElementById('showDialog').classList.remove('margin-arrow-left');
+    }
+    if (activeCard == allPokemons.length) {
+        document.getElementById('arrow-next').classList.add('d-none');
+        document.getElementById('showDialog').classList.add('margin-arrow-right');
+    } else {
+        document.getElementById('arrow-next').classList.remove('d-none');
+        document.getElementById('showDialog').classList.remove('margin-arrow-right');
+    }
+}

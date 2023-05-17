@@ -22,10 +22,11 @@ function createPokemonCard() {
 }
 
 function createDialogCard() {
-    document.getElementById('showDialog').innerHTML +=  `        
+    document.getElementById('showDialog').innerHTML +=  `
+           
     <div class="dialog-card d-none" id="dialog-card${i}" onclick="">
     <!--Head-->
-    <div class="pokedex" id="pokedex-dialog${i}" style="background-color: #FFFFFF;">
+    <div class="pokedex-card" id="pokedex-dialog${i}" style="background-color: #FFFFFF;">
         <div class="name-head">
             <h1 id="pokemonName-dialog${i}"></h1>
             <span id="idNumber-dialog${i}">#</span>
@@ -72,7 +73,7 @@ function createDialogCard() {
                 
                 </div>
             </div>
-            <div class="mb-2 d-flex border-bottom height-75">
+            <div class="mb-2 d-flex border-bottom height-75 height-auto">
                 <span  class="width-175"><b>Egg Group</b></span>
                 <div class="d-flex flex-column" id="egg-group${i}">
                 
