@@ -183,6 +183,13 @@ async function filterPokemon() {
         }
     }
 
+    if (searchIds.length == 0) {
+        document.getElementById('err-msg').classList.remove('d-none');
+    } else {
+        document.getElementById('err-msg').classList.add('d-none');
+    }
+    
+
 }
 
 function showDialog(CardNumber) {
